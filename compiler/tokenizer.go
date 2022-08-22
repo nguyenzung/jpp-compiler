@@ -5,12 +5,17 @@ import (
 	"bytes"
 	"fmt"
 	"os"
+	"regexp"
 	"strings"
 )
 
 const (
-	KEYWORD string = "keyword"
-	SYMBOL  string = "symbol"
+	KEYWORD    string = "keyword"
+	SYMBOL     string = "symbol"
+	NUMBER     string = "number"
+	STRING     string = "string"
+	IDENTIFIER string = "identifier"
+	UNKNOWN    string = ""
 )
 
 type Vocabulary struct {
@@ -20,10 +25,8 @@ type Vocabulary struct {
 }
 
 func (vocabulary *Vocabulary) init() {
-	vocabulary.keywords = []string{"class", "constructor", "function", "method", "field", "static", "var", "int", "char", "boolean", "void", "do", "true", "false", "null", "this", "let", "if", "else", "white", "return"}
-	// fmt.Println("[WORD]", len(token.keywords))
+	vocabulary.keywords = []string{"class", "constructor", "function", "method", "field", "static", "var", "int", "char", "boolean", "void", "do", "true", "false", "null", "this", "let", "if", "else", "while", "return"}
 	vocabulary.symbols = []string{"{", "}", "(", ")", "[", "]", ".", ",", ";", "+", "-", "*", "/", "&", "|", "<", ">", "=", "~"}
-	// fmt.Println("[SYM]", len(token.symbols))
 	vocabulary.keyTokens = make(map[string]string)
 	for _, keyword := range vocabulary.keywords {
 		vocabulary.keyTokens[keyword] = KEYWORD
@@ -40,10 +43,24 @@ func MakeVocabulary() *Vocabulary {
 	return vocabulary
 }
 
+type Token struct {
+	token string
+	tag   string
+}
+
+func (token *Token) print() {
+	fmt.Println("[", token.tag, "]", token.token)
+}
+
+func MakeCodeItem(token string, tag string) *Token {
+	return &Token{token: token, tag: tag}
+}
+
 type Tokenizer struct {
 	vocabulary   *Vocabulary
 	fileName     string
 	currentToken *bytes.Buffer
+	tokens       []*Token
 }
 
 func (tokenizer *Tokenizer) processNewLine(line string) {
@@ -51,37 +68,66 @@ func (tokenizer *Tokenizer) processNewLine(line string) {
 		if string(line[i]) != " " {
 			tokenizer.processCharacter(line[i])
 		}
-
 	}
 }
 
 func (tokenizer *Tokenizer) processCharacter(c byte) {
 	if val, ok := tokenizer.vocabulary.keyTokens[string(c)]; ok && val == SYMBOL {
-		tokenizer.processCurrentToken(tokenizer.currentToken.String())
-		tokenizer.processCurrentToken(string(c))
+		tokenizer.processCurrentToken(tokenizer.currentToken.String(), getTag(tokenizer.currentToken.String()))
+		tokenizer.processCurrentToken(string(c), SYMBOL)
 		tokenizer.currentToken.Reset()
 	} else {
 		tokenizer.currentToken.WriteByte(c)
 		val, ok := tokenizer.vocabulary.keyTokens[tokenizer.currentToken.String()]
 		if ok {
 			if val == KEYWORD {
-				tokenizer.processCurrentToken(tokenizer.currentToken.String())
+				tokenizer.processCurrentToken(tokenizer.currentToken.String(), KEYWORD)
 				tokenizer.currentToken.Reset()
 			}
 		}
 	}
-
 }
 
-func (tokenizer *Tokenizer) processCurrentToken(candidate string) {
-	if len(candidate) > 0 {
-		fmt.Println("[CURR Token]", candidate)
+func (tokenizer *Tokenizer) processCurrentToken(token string, tag string) {
+	if len(token) > 0 && tag != UNKNOWN {
+		tokenizer.tagToken(token, tag)
 	}
+}
 
+func getTag(token string) string {
+	if len(token) == 0 {
+		return UNKNOWN
+	}
+	if isNumber(token) {
+		return NUMBER
+	} else if isString(token) {
+		return STRING
+	} else if isIdentifier(token) {
+		return IDENTIFIER
+	}
+	return UNKNOWN
+}
+
+var numberRegex, _ = regexp.Compile("^[0-9]+$")
+
+func isNumber(token string) bool {
+	return numberRegex.MatchString(token)
+}
+
+var stringRegex, _ = regexp.Compile("^\"[^\n]+\"$")
+
+func isString(token string) bool {
+	return stringRegex.MatchString(token)
+}
+
+var idenRegex, _ = regexp.Compile("^[a-zA-Z_][a-zA-Z0-9_]+$")
+
+func isIdentifier(token string) bool {
+	return idenRegex.MatchString(token)
 }
 
 func (tokenizer *Tokenizer) tagToken(token string, tag string) {
-
+	tokenizer.tokens = append(tokenizer.tokens, MakeCodeItem(token, tag))
 }
 
 func (tokenizer *Tokenizer) parse() {
@@ -109,5 +155,5 @@ func (tokenizer *Tokenizer) parse() {
 }
 
 func MakeTokenizer(fileName string, vocabulary *Vocabulary) *Tokenizer {
-	return &Tokenizer{fileName: fileName, vocabulary: vocabulary, currentToken: &bytes.Buffer{}}
+	return &Tokenizer{fileName: fileName, vocabulary: vocabulary, currentToken: &bytes.Buffer{}, tokens: make([]*Token, 0)}
 }
