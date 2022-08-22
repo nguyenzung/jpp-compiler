@@ -9,13 +9,9 @@ func (tree *AST) hasMoreToken() bool {
 	return len(tree.tokens) > tree.currentIndex
 }
 
-func (tree *AST) increaseCurrentIndex() {
-	tree.currentIndex += 1
-}
-
 func (tree *AST) advance() *Token {
-	defer tree.increaseCurrentIndex()
-	return tree.tokens[tree.currentIndex]
+	tree.currentIndex += 1
+	return tree.tokens[tree.currentIndex-1]
 }
 
 func (tree *AST) buildAST() {
