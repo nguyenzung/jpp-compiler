@@ -130,7 +130,7 @@ func (tokenizer *Tokenizer) tagToken(token string, tag string) {
 	tokenizer.tokens = append(tokenizer.tokens, MakeCodeItem(token, tag))
 }
 
-func (tokenizer *Tokenizer) parse() {
+func (tokenizer *Tokenizer) parse() []*Token {
 	file, err := os.Open(tokenizer.fileName)
 	if err != nil {
 		panic((err))
@@ -152,6 +152,7 @@ func (tokenizer *Tokenizer) parse() {
 			tokenizer.processNewLine(line)
 		}
 	}
+	return tokenizer.tokens
 }
 
 func MakeTokenizer(fileName string, vocabulary *Vocabulary) *Tokenizer {
