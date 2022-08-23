@@ -29,8 +29,17 @@ func (ast *AST) isChildProcessing() bool {
 	}
 }
 
-func (ast *AST) isClassWord() {
-	
+func (ast *AST) process(token *Token) {
+	fmt.Println("[Process]")
+	if len(ast.astProcessors) > 0 && !ast.astProcessors[len(ast.astProcessors)-1].isFinished() {
+		ast.astProcessors[len(ast.astProcessors)-1].process(token)
+	} else {
+		
+	}
+}
+
+func (ast *AST) isClassWord(token *Token) bool {
+
 }
 
 type ClassAST struct {
@@ -81,11 +90,6 @@ func (parser *FileAST) hasMoreToken() bool {
 func (parser *FileAST) advance() {
 	parser.process(parser.tokens[parser.currentIndex])
 	parser.currentIndex += 1
-}
-
-func (parser *FileAST) process(token *Token) {
-	fmt.Println("[Process]", token)
-
 }
 
 func MakeFileAST(tokens []*Token) *FileAST {
