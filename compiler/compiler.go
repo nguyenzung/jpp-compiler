@@ -2,15 +2,16 @@ package compiler
 
 type Compiler struct {
 	vocabulary *Vocabulary
-	tokenizer  *Tokenizer
 }
 
 func (compiler *Compiler) CompileFile(fileName string) {
-	compiler.tokenizer = MakeTokenizer(fileName, compiler.vocabulary)
-	compiler.tokenizer.parse()
-	for _, token := range compiler.tokenizer.tokens {
+	tokenizer := MakeTokenizer(fileName, compiler.vocabulary)
+	tokens := tokenizer.parse()
+	for _, token := range tokens {
 		token.print()
 	}
+	ast := MakeFileAST(tokens)
+	ast.buildAST()
 }
 
 func MakeCompiler() *Compiler {
