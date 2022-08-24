@@ -1,5 +1,7 @@
 package compiler
 
+import "fmt"
+
 type Compiler struct {
 	vocabulary *Vocabulary
 }
@@ -7,11 +9,9 @@ type Compiler struct {
 func (compiler *Compiler) CompileFile(fileName string) {
 	tokenizer := MakeTokenizer(fileName, compiler.vocabulary)
 	tokens := tokenizer.parse()
-	for _, token := range tokens {
-		token.print()
-	}
-	ast := MakeFileAST(tokens)
-	ast.buildAST()
+	ast := MakeAST()
+	ast.Parse(tokens[:len(tokens)-1])
+	fmt.Println(ast.IsFinish())
 }
 
 func MakeCompiler() *Compiler {
