@@ -10,7 +10,7 @@ func (compiler *Compiler) CompileFile(fileName string) {
 	tokenizer := MakeTokenizer(fileName, compiler.vocabulary)
 	tokens := tokenizer.parse()
 	ast := MakeAST()
-	ast.Parse(tokens[:len(tokens)-1])
+	ast.Parse(tokens)
 	fmt.Println(ast.IsFinish())
 }
 

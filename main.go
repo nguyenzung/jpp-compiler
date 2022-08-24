@@ -6,5 +6,5 @@ import (
 
 func main() {
 	compiler := cp.MakeCompiler()
-	compiler.CompileFile("jackfiles/ArrayTest/VarDec.jpp")
+	compiler.CompileFile("jackfiles/ArrayTest/Class.jpp")
 }

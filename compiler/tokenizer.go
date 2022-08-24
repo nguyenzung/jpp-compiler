@@ -95,15 +95,14 @@ func (tokenizer *Tokenizer) processCurrentToken(token string, tag string) {
 }
 
 func getTag(token string) string {
-	if len(token) == 0 {
-		return UNKNOWN
-	}
-	if isNumber(token) {
-		return NUMBER
-	} else if isString(token) {
-		return STRING
-	} else if isIdentifier(token) {
-		return IDENTIFIER
+	if len(token) > 0 {
+		if isNumber(token) {
+			return NUMBER
+		} else if isString(token) {
+			return STRING
+		} else if isIdentifier(token) {
+			return IDENTIFIER
+		}
 	}
 	return UNKNOWN
 }
@@ -120,13 +119,14 @@ func isString(token string) bool {
 	return stringRegex.MatchString(token)
 }
 
-var idenRegex, _ = regexp.Compile("^[a-zA-Z_][a-zA-Z0-9_]+$")
+var idenRegex, _ = regexp.Compile("^([a-zA-Z_]|[a-zA-Z0-9_])+$")
 
 func isIdentifier(token string) bool {
 	return idenRegex.MatchString(token)
 }
 
 func (tokenizer *Tokenizer) tagToken(token string, tag string) {
+	fmt.Println("[PROCESS TOKENIZER]", token, tag)
 	tokenizer.tokens = append(tokenizer.tokens, MakeCodeItem(token, tag))
 }
 

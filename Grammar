@@ -133,7 +133,7 @@ GRAMMAR after absorbing non-essential non-terminals.
 
 <subroutineDec> =>
   ('constructor' | 'function' | 'method')
-  ('void' | 'int' | 'char' | 'boolean' | identifier) identifier '(' <parameterList> ')'
+  ('void' | 'int' | 'char' | 'boolean' |  ) identifier '(' <parameterList> ')'
   <subroutineBody>
 
 <parameterList> =>
