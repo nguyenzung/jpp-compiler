@@ -34,7 +34,7 @@ func (vocabulary *Vocabulary) init() {
 	for _, symbol := range vocabulary.symbols {
 		vocabulary.keyTokens[symbol] = SYMBOL
 	}
-	fmt.Println(vocabulary.keyTokens)
+	// fmt.Println(vocabulary.keyTokens)
 }
 
 func MakeVocabulary() *Vocabulary {

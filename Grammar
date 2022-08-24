@@ -154,12 +154,12 @@ GRAMMAR after absorbing non-essential non-terminals.
   'let' identifier ('[' <expression> ']')? '=' <expression> ';'
 
 <ifStatement> =>
-  'if' '(' <expression> ')' '{' statements> '}'
-  ('else' '{' statements> '}')?
+  'if' '(' <expression> ')' '{' <statements> '}'
+  ('else' '{' <statements> '}')?
 
 <whileStatement> =>
-  'while' '(' <expression> ')' '{' statements> '}'
-  ('else' '{' statements> '}')?
+  'while' '(' <expression> ')' '{' <statements> '}'
+  ('else' '{' <statements> '}')?
 
 <doStatement> =>
   'do' (identifier '.')? identifier '(' <expressionList> ')' ';'
